@@ -14,10 +14,10 @@ class ArrayList {
    */
   static getArray(size) {
     const toReturn = new Array(size);
-    Object.seal(toReturn);
     for (let i = 0; i < size; i++) {
       toReturn[i] = null;
     }
+    Object.seal(toReturn);
     return toReturn;
   }
 
@@ -28,6 +28,8 @@ class ArrayList {
    *  of that size can be preallocated.
    */
   constructor(initialCapacity = 10) {
+    this._storage = ArrayList.getArray(initialCapacity);
+    this._size = 0;
   }
 
   /***********************
@@ -37,6 +39,9 @@ class ArrayList {
   /**
    *  Add the item at the specified point in the list.  This should error if 
    *  the specified index is not available, or if the item is null or undefined.
+   * 
+   *  Tip - If the array runs out of space the traditional behaviour is to make 
+   *  a new array that is larger, and copy everything in.
    *
    *  @param i the index in the list that the item should reside at.
    *  @param item the item to be inserted
@@ -45,10 +50,29 @@ class ArrayList {
    *  @spaceComplexity O(1) - most of the time.  Possible worst case of O(n).
    */
   insert(i, item) {
+    if (!item) {
+      throw `${item} is an invalid item. Please try again.`;
+    }
+
+    if (i > this._size) {
+      throw `${i} is not available. The next available index is ${this._size}`;
+    }
+
+    // if (i <= this._size) {
+    //   //create larger array
+    //   var largerArray = ArrayList.getArray(this._storage.length *2);
+    //   this._storage = largerArray.push(this._storage);
+    //   this._storage[i] = item;
+    // }
+    
+    if (i <= this._size) {
+      this._storage[i] = item;
+      this._size++;
+    }
   }
 
   /**
-   *  Add the item to the beginning of the list.  This should error if 
+   *  Add the item to the end of the list.  This should error if 
    *  the item is null or undefined.
    *  
    *  equivalent to `insert(length, item)`
@@ -59,6 +83,11 @@ class ArrayList {
    *  @spaceComplexity O(1) - most of the time.  Possible worst case of O(n)
    */
   append(item) {
+    if (!item) {
+      throw `${item} is an invalid item. Please try again.`;
+    } else {
+      this._storage[this._storage.length] = item;
+    };
   }
 
   /**
@@ -73,6 +102,11 @@ class ArrayList {
    *  @spaceComplexity O(1) - most of the time.  Possible worst case of O(n).
    */
   prepend(item) {
+    if (!item) {
+      throw `${item} is an invalid item. Please try again.`;
+    } else {
+      this._storage[0] = item;
+    };
   }
 
   /*********************
