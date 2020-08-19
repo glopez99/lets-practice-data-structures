@@ -54,21 +54,28 @@ class ArrayList {
       throw `${item} is an invalid item. Please try again.`;
     }
 
-    if (i > this._size) {
+    if (i > this._size || i < 0) {
       throw `${i} is not available. The next available index is ${this._size}`;
     }
 
-    // if (i <= this._size) {
-    //   //create larger array
-    //   var largerArray = ArrayList.getArray(this._storage.length *2);
-    //   this._storage = largerArray.push(this._storage);
-    //   this._storage[i] = item;
-    // }
-    
-    if (i <= this._size) {
-      this._storage[i] = item;
-      this._size++;
+    if (this._size === this._storage.length) {
+      this._expand();
     }
+
+    for (let current = this._size; current > 0; current--){
+      this._storage[current] = this._storage[current - 1];
+    }
+    
+    this._storage[i] = item;
+    this._size++;
+  }
+
+  _expand() {
+    const newStorage = ArrayList.getArray(this._storage.length * 2);
+    for (let i = 0; i < this._storage.length; i++) {
+      newStorage[i] = this._storage[i];
+    }
+    this._storage = newStorage;
   }
 
   /**
@@ -83,13 +90,8 @@ class ArrayList {
    *  @spaceComplexity O(1) - most of the time.  Possible worst case of O(n)
    */
   append(item) {
-    if (!item) {
-      throw `${item} is an invalid item. Please try again.`;
-    } else {
-      this._storage[this._storage.length] = item;
-    };
+    this.insert(this._size, item);
   }
-
   /**
    *  Add the item to the beginning of the list.  This should error if 
    *  the item is null or undefined.
@@ -102,13 +104,8 @@ class ArrayList {
    *  @spaceComplexity O(1) - most of the time.  Possible worst case of O(n).
    */
   prepend(item) {
-    if (!item) {
-      throw `${item} is an invalid item. Please try again.`;
-    } else {
-      this._storage[0] = item;
-    };
+    this.insert(0,item);
   }
-
   /*********************
    * REMOVAL BEHAVIOUR *
    *********************/
@@ -123,7 +120,21 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   remove(i) {
-    return null;
+    if (this._size === 0) {
+      throw 'There is nothing to remove in this list.'
+    }
+
+    if (i >= this._size || i < 0) {
+      throw `${i} is outside the bounds of this list.`
+    }
+
+    const removedItem = this._storage[i];
+
+    for (let current = i; current < this._storage.length; current++) {
+      this._storage[current] = this._storage[current + 1];
+    }
+    this._size--;
+    return removedItem;
   }
 
   /**
@@ -136,7 +147,18 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   removeFirst() {
-    return null;
+    if (this._size === 0) {
+      return null;
+    }
+
+    const firstItem = this._storage[0];
+
+    for (let i = 1; i < this._storage.length; i++) {
+      this._storage[i - 1] = this._storage[i];
+    }
+
+    this._size--;
+    return firstItem;
   }
 
   /**
@@ -149,7 +171,15 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   removeLast() {
-    return null;
+    if (this._size === 0) {
+      return null;
+    }
+
+    const lastItem = this._storage[this._size - 1];
+    this._storage[this._size - 1] = null;
+
+    this._size--;
+    return lastItem;
   }
 
   /**
@@ -162,6 +192,19 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   removeItem(item) {
+    if (!item) {
+      return -1;
+    }
+
+    for (let i = 0; i < this._storage.length; i++) {
+      if (this._storage[i] != item) {
+      } else {
+        const removedItem = i;
+        this.remove(i);
+        return removedItem;
+      }
+    }
+
     return -1;
   }
 
@@ -178,6 +221,16 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   contains(item) {
+    if (!item) {
+      throw `${item} is an invalid choice. Please try again.`
+    }
+
+    for (let i = 0; i < this._storage.length; i++) {
+      if (this._storage[i] === item) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -191,7 +244,15 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   peek(i) {
-    return null;
+    if (this._size === 0) {
+      throw 'This list is empty.'
+    }
+
+    if (i >= this._size || i < 0) {
+      throw `${i} is outside the bounds of the list.`
+    }
+
+    return this._storage[i];
   }
 
   /**
@@ -204,7 +265,11 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   peekFirst() {
-    return null;
+    if (this._size === 0) {
+      return null;
+    }
+
+    return this._storage[0];
   }
 
   /**
@@ -217,7 +282,11 @@ class ArrayList {
    *  @spaceComplexity O(1)
    */
   peekLast() {
-    return null;
+    if (this._size === 0) {
+      return null;
+    }
+
+    return this._storage[this._size - 1];
   }
 
   /**
@@ -227,7 +296,7 @@ class ArrayList {
    *  @timeComplexity O(1)
    */
   size() {
-    return 0;
+    return this._size;
   }
 
   /******************
@@ -273,7 +342,20 @@ class ArrayList {
    *  @spaceComplexity O(n)
    */
   toArray() {
-    return [];
+    if (this._size === 0) {
+      return [];
+    }
+
+    var array = [];
+
+    for (let i = 0; i < this._size; i++) {
+      array = [
+        ...array,
+        this._storage[i]
+      ]
+    }
+
+    return array;
   }
 }
 
