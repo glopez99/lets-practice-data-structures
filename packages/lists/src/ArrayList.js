@@ -130,7 +130,7 @@ class ArrayList {
 
     const removedItem = this._storage[i];
 
-    for (let current = i; current < this._storage.length; current++) {
+    for (let current = i; current < this._size; current++) {
       this._storage[current] = this._storage[current + 1];
     }
     this._size--;
