@@ -8,6 +8,8 @@ class Stack {
    *  Stack Constructors take no arguments.
    */
   constructor() {
+    this._head = null;
+
   }
   
   /****************
@@ -23,6 +25,14 @@ class Stack {
    *  @spaceComplexity O(1) - though the nature of that constant performance depends on implementation.
    */
   push(item) {
+    if (!item) {
+      throw `This ${item} is null or undefined.`
+    } 
+    
+    this._head = {
+      item: item,
+      next: this._head,
+    };
   }
 
   /**
@@ -34,7 +44,16 @@ class Stack {
    *  @spaceComplexity O(1)
    */
   pop() {
-  }
+    if(this.isEmpty()) {
+      throw `This is an empty stack`;
+    }
+
+    const toReturn = this._head.item;
+    this._head = this._head.next;
+   
+    return toReturn;
+  
+  };
 
   
   /*****************
@@ -50,6 +69,11 @@ class Stack {
    *  @spaceComplexity O(1)
    */
   peek() {
+    if(this.isEmpty()){
+      throw `This is an empty stack`;
+    } else {
+      return this._head.item;
+    }
   }
 
   /**
@@ -60,6 +84,7 @@ class Stack {
    *  @spaceComplexity O(1)
    */
   isEmpty() {
+    return this._head === null;
   }
 }
 
